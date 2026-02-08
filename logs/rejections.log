@@ -1,0 +1,33 @@
+2026-02-07 16:03:22 [ERROR]: SequelizeEagerLoadingError: CoinNetwork is not associated to Coin!
+    at Coin._getIncludedAssociation (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:565:13)
+    at Coin._validateIncludedElement (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:502:53)
+    at C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:421:37
+    at Array.map (<anonymous>)
+    at Coin._validateIncludedElements (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:417:39)
+    at Wallet._validateIncludedElement (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:557:38)
+    at C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:421:37
+    at Array.map (<anonymous>)
+    at Wallet._validateIncludedElements (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:417:39)
+    at Wallet.findAll (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:1124:12)
+2026-02-07 23:21:51 [ERROR]: Error: WHERE parameter "coin_id" has invalid "undefined" value
+    at PostgresQueryGenerator.whereItemQuery (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:1746:13)
+    at C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:1737:25
+    at Array.forEach (<anonymous>)
+    at PostgresQueryGenerator.whereItemsQuery (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:1735:35)
+    at PostgresQueryGenerator.getWhereConditions (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:2078:19)
+    at PostgresQueryGenerator.selectQuery (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:991:28)
+    at PostgresQueryInterface.select (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:59)
+    at WalletAddress.findAll (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:1140:47)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async WalletAddress.findOne (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:1240:12)
+2026-02-07 23:30:05 [ERROR]: Error: WHERE parameter "coin_id" has invalid "undefined" value
+    at PostgresQueryGenerator.whereItemQuery (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:1746:13)
+    at C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:1737:25
+    at Array.forEach (<anonymous>)
+    at PostgresQueryGenerator.whereItemsQuery (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:1735:35)
+    at PostgresQueryGenerator.getWhereConditions (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:2078:19)
+    at PostgresQueryGenerator.selectQuery (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-generator.js:991:28)
+    at PostgresQueryInterface.select (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\dialects\abstract\query-interface.js:407:59)
+    at WalletAddress.findAll (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:1140:47)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async WalletAddress.findOne (C:\Users\USER\Desktop\project\Node\elitetrust\node_modules\sequelize\lib\model.js:1240:12)

@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "demo0504",
+    "database": "elite_dev",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "demo0504",
+    "database": "elite_test",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "demo0504",
+    "database": "elite_prod",
+    "host": "localhost",
+    "dialect": "postgres"
+  }
+}
