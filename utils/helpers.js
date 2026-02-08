@@ -339,16 +339,24 @@ const safeNumber = (v) => {
     return Number.isFinite(n) ? n : 0;
   };
 
-
-
 const transporter = nodemailer.createTransport({
-  host: 'smtp.elitetrustvault.com', // or your SMTP host
-  port: 465,
-  secure: true, // true for 465
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT || 465),
+  secure: true, // 465
   auth: {
-    user: "no-reply@elitetrustvault.com",
-    pass: "Mb417acf9",
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
+
+  // ✅ prevents hanging/timeouts on Render
+  connectionTimeout: 10_000,
+  greetingTimeout: 10_000,
+  socketTimeout: 20_000,
+
+  // ✅ helps when sending many emails
+  pool: true,
+  maxConnections: 2,
+  maxMessages: 50,
 });
 
 module.exports = {
