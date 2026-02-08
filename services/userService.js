@@ -148,105 +148,105 @@ class UserService {
   }
 
   async registerNew(userData, ip, device) {
-  const {
-    firstName, lastName, email, username, phone,
-    country, currency, password, confirmPassword,
-    pin, confirmPin, referralCode
-  } = userData;
+    const {
+      firstName, lastName, email, username, phone,
+      country, currency, password, confirmPassword,
+      pin, confirmPin, referralCode
+    } = userData;
 
-  const existingUser = await User.findOne({ where: { email } });
-  if (existingUser) throw new ConflictError('Email already registered');
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) throw new ConflictError('Email already registered');
 
-  if (password !== confirmPassword) throw new ValidationError('Password does not match');
-  if (pin !== confirmPin) throw new ValidationError('Pin entered does not match');
+    if (password !== confirmPassword) throw new ValidationError('Password does not match');
+    if (pin !== confirmPin) throw new ValidationError('Pin entered does not match');
 
-  const createdUser = await sequelize.transaction(async (t) => {
-    // Coins to create wallets for
-    const coins = await Coin.findAll({
-      where: { allow_wallet: true, status: true },
-      attributes: ['id', 'symbol'],
-      transaction: t,
-    });
-
-    // Referral lookup
-    let referredById = null;
-    if (referralCode) {
-      const referrer = await User.findOne({ where: { referralCode }, transaction: t });
-      if (referrer) referredById = referrer.id;
-    }
-
-    // Create user
-    const newUser = await User.create({
-      email,
-      password,
-      username,
-      pin,
-      firstName,
-      lastName,
-      country,
-      currency,
-      phone,
-      referredById,
-      referralCode: generateReferralCode(),
-      status: 'active',
-      email_verified: true,
-      emailVerificationToken: generateRandomString(32),
-      emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      // ip,
-      // device,
-    }, { transaction: t });
-
-    // Existing wallets for this new user (should be none, but keeps it rerunnable)
-    const existingWallets = await Wallet.findAll({
-      where: { userId: newUser.id },
-      attributes: ['coinId', 'userId'], // MUST match your model attribute names
-      transaction: t,
-    });
-
-    const existingSet = new Set(existingWallets.map(w => `${w.coinId}:${w.userId}`));
-
-    // Build wallet rows
-    const rows = [];
-    for (const coin of coins) {
-      const key = `${coin.id}:${newUser.id}`;
-      if (existingSet.has(key)) continue;
-
-      rows.push({
-        reference: generateRandomString(16), // or uuidv4()
-        coinId: coin.id,
-        userId: newUser.id,
-        status: true,
-      });
-
-      existingSet.add(key);
-    }
-
-    if (rows.length) {
-      await Wallet.bulkCreate(rows, {
-        ignoreDuplicates: true,
+    const createdUser = await sequelize.transaction(async (t) => {
+      // Coins to create wallets for
+      const coins = await Coin.findAll({
+        where: { allow_wallet: true, status: true },
+        attributes: ['id', 'symbol'],
         transaction: t,
       });
-    }
 
-    // Create balance row idempotently
-    await UserBalance.findOrCreate({
-      where: { userId: newUser.id },
-      defaults: { userId: newUser.id },
-      transaction: t,
+      // Referral lookup
+      let referredById = null;
+      if (referralCode) {
+        const referrer = await User.findOne({ where: { referralCode }, transaction: t });
+        if (referrer) referredById = referrer.id;
+      }
+
+      // Create user
+      const newUser = await User.create({
+        email,
+        password,
+        username,
+        pin,
+        firstName,
+        lastName,
+        country,
+        currency,
+        phone,
+        referredById,
+        referralCode: generateReferralCode(),
+        status: 'active',
+        email_verified: true,
+        emailVerificationToken: generateRandomString(32),
+        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        // ip,
+        // device,
+      }, { transaction: t });
+
+      // Existing wallets for this new user (should be none, but keeps it rerunnable)
+      const existingWallets = await Wallet.findAll({
+        where: { userId: newUser.id },
+        attributes: ['coinId', 'userId'], // MUST match your model attribute names
+        transaction: t,
+      });
+
+      const existingSet = new Set(existingWallets.map(w => `${w.coinId}:${w.userId}`));
+
+      // Build wallet rows
+      const rows = [];
+      for (const coin of coins) {
+        const key = `${coin.id}:${newUser.id}`;
+        if (existingSet.has(key)) continue;
+
+        rows.push({
+          reference: generateRandomString(16), // or uuidv4()
+          coinId: coin.id,
+          userId: newUser.id,
+          status: true,
+        });
+
+        existingSet.add(key);
+      }
+
+      if (rows.length) {
+        await Wallet.bulkCreate(rows, {
+          ignoreDuplicates: true,
+          transaction: t,
+        });
+      }
+
+      // Create balance row idempotently
+      await UserBalance.findOrCreate({
+        where: { userId: newUser.id },
+        defaults: { userId: newUser.id },
+        transaction: t,
+      });
+
+      return newUser;
     });
 
-    return newUser;
-  });
+    logger.info(`New user registered: ${email}`);
 
-  logger.info(`New user registered: ${email}`);
-
-  return {
-    user: createdUser.toJSON(),
-  };
-}
+    return {
+      user: createdUser.toJSON(),
+    };
+  }
 
 
-  
+
 
   async start(userData, ip, device) {
     const { email } = userData;
@@ -261,13 +261,16 @@ class UserService {
 
     const opt = await EmailOTP.createOTP({ email: email, ip: ip, device: device })
     logger.info(`New OTP SENT FOR registered: ${email}`);
-    const info = await transporter.sendMail({
-    from: '"Elite" <no-reply@elitetrustvault.com>',
-    to: email,
-    subject: 'Verification Code',
-    text: `Your code is ${ opt.code}`,
-    html: `<h2>Your code is ${ opt.code}`,
-  })
+    transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: "Verification Code",
+      text: `Your code is ${otp.code}`,
+      html: `<h2>Your code is ${otp.code}</h2>`,
+    })
+      .then(() => logger.info(`OTP email sent: ${email}`))
+      .catch((err) => logger.error({ err }, `OTP email failed: ${email}`));
+
     return {
       registered: false,
       //code: opt.code,
