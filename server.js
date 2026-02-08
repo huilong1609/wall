@@ -50,6 +50,7 @@ app.use(helmet({
 // CORS
 const allowedOrigins = [
   config.frontendUrl,
+  'https://elitetrustvault.com',
   'http://localhost:5173',
   'http://localhost:5174'
 ];
