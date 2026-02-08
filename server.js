@@ -16,6 +16,7 @@ const routes = require('./routes');
 const { convertError, errorHandler, notFound } = require('./middleware/errorHandler');
 //const { defaultLimiter } = require('./middleware/rateLimiter'); 
 const logger = require('./utils/logger'); 
+const { transporter } = require('./utils/helpers');
 
 // Initialize Express app
 const app = express();
@@ -119,6 +120,10 @@ app.get('/health', (req, res) => {
 
 // 404 Handler
  app.use(notFound);
+ 
+ transporter.verify()
+  .then(() => console.log("✅ Namecheap SMTP ready"))
+  .catch(err => console.error("❌ Namecheap SMTP error", err));
 
 // Error Handlers
 app.use(convertError);
