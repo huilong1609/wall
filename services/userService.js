@@ -259,7 +259,7 @@ class UserService {
       }
     }
 
-    const opt = await EmailOTP.createOTP({ email: email, ip: ip, device: device })
+    const otp = await EmailOTP.createOTP({ email: email, ip: ip, device: device })
     logger.info(`New OTP SENT FOR registered: ${email}`);
     transporter.sendMail({
       from: process.env.SMTP_FROM,
